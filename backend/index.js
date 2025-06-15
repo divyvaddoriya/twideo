@@ -6,8 +6,7 @@ configDotenv();
 
 const port = process.env.PORT || 8000; 
 
-DBconnect()
-.then(()=>{
+DBconnect().then(()=>{
     app.listen(port , () => {
         console.log("server is running on !! ", port);
     })

@@ -23,7 +23,7 @@ const userSchema = new mongoose.Schema({
         min: [6 , "password should be minimum of 6 letters"] ,
         max: [20 , "password should not be greater than 20 letter"]
     },
-    fullName: {
+    fullname: {
         type: String,
         required: true,
         index: true,
@@ -32,7 +32,7 @@ const userSchema = new mongoose.Schema({
         type: String, // cloudinary url 
         required: true
     },
-    coverImage: {
+    coverImg: {
         type: String, // cloudinary url 
     },
     watchHistory: [
@@ -51,7 +51,7 @@ userSchema.pre("save" ,async function (next) {
     if(!this.isModified("password")) return next();
     // here is modified means if u are not changing the password then u should continue
 
-    this.password = bcrypt.hash(this.password , 10);
+    this.password = await bcrypt.hash(this.password , 10);
     next();
 }) // arrow funciton does not have this object so we have to use function 
 
@@ -60,12 +60,12 @@ userSchema.methods.isPasswordCorrect = async function (password) {
 }
 
 userSchema.methods.generateAccessToken = function(){
-    jwt.sign(
+   return jwt.sign(
         {
             _id: this._id,
             email : this.email,
             username: this.username,
-            fullName : this.fullName,
+            fullname : this.fullname,
         },
         process.env.ACCESS_TOKEN_SECRET,
         {
@@ -75,12 +75,10 @@ userSchema.methods.generateAccessToken = function(){
 }
 
 userSchema.methods.generateRefreshToken = function(){
-     jwt.sign(
+    return jwt.sign(
         {
             _id: this._id,
-            email : this.email,
-            username: this.username,
-            fullName : this.fullName,
+           
         },
         process.env.REFRESH_TOKEN_SECRET,
         {

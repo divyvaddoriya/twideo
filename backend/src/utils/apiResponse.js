@@ -7,3 +7,5 @@ class ApiResponse {
         //this means all the succesful response should have status code less than 400 
     }
 }
+
+export {ApiResponse}
