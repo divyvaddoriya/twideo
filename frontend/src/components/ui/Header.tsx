@@ -1,10 +1,12 @@
 import React, { useState } from 'react';
-import { Search, Bell, User, Upload, Menu, Sparkles } from 'lucide-react';
+import { Search, Bell, User, Upload, Menu, Sparkles, LogOut } from 'lucide-react';
 import { Link } from 'react-router-dom';
+import { logoutUser } from '@/api/auth';
+import { useAuth } from '@/context/authContext';
 
 const Header = () => {
   const [searchQuery, setSearchQuery] = useState('');
-
+const {setUser} = useAuth();
   return (
     <header className="fixed top-0 left-0 right-0 bg-gray-900/80 backdrop-blur-xl border-b border-gray-700/50 z-50">
       <div className="flex items-center justify-between px-6 py-4">
@@ -64,6 +66,20 @@ const Header = () => {
           
           <Link to="/profile" className="p-3 hover:bg-gray-700/50 rounded-2xl transition-colors duration-200 group">
             <User className="w-5 h-5 text-gray-300 group-hover:text-white" />
+          </Link>
+
+          <Link to="/profile" className="p-3 hover:bg-gray-700/50 rounded-2xl transition-colors duration-200 group">
+                      <span className="hidden sm:block font-medium">
+                        <button onClick={()=>
+                          {
+                            logoutUser()
+                            setUser();
+                          }
+                          }>
+                              Logout
+                        </button>
+                      </span>
+            <LogOut className="w-5 h-5 text-gray-300 group-hover:text-white" />
           </Link>
         </div>
       </div>

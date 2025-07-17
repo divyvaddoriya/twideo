@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Link, Navigate } from 'react-router-dom';
+import { Link, Navigate, useNavigate } from 'react-router-dom';
 import { Eye, EyeOff, Mail, Lock, Sparkles, ArrowRight } from 'lucide-react';
 import { loginUser } from '@/api/auth';
 import { toast } from 'react-toastify';
@@ -12,7 +12,7 @@ const Login = () => {
   });
   const [showPassword, setShowPassword] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
-
+  const navigate = useNavigate();
   const {setUser, setIsAuthenticated} = useAuth();
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -30,6 +30,7 @@ const Login = () => {
 });
 setUser(user);                // ✅ reset user
     setIsAuthenticated(true);
+  navigate('/');
       // Optionally, redirect or trigger auth context update
   } catch (err) {
     toast.error("please enter correct credentials");

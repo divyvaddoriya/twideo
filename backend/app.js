@@ -14,10 +14,18 @@ app.use(express.urlencoded({extended: true , limit: "16kb"})) // when u want to 
 app.use(express.static("public"))
 app.use(cookieParser())  //it make cookie easily redable from your application 
 
-
-
 import userRoutes from "./src/routes/auth.route.js";
+import videoRoutes from "./src/routes/video.route.js";
+import commentRoutes from "./src/routes/comment.route.js";
+import tweetRoutes from "./src/routes/tweet.route.js";
+import likeRoutes from "./src/routes/like.route.js";
+import subscribtionRoutes from "./src/routes/subscription.route.js";
 // routes configuration 
 app.use('/api/v1/user' , userRoutes);
+app.use('/api/v1/video' , videoRoutes);
+app.use('/api/v1/comment' , commentRoutes);
+app.use('/api/v1/tweet' , tweetRoutes);
+app.use('/api/v1/like' , likeRoutes);
+app.use('/api/v1/subscribtion' , subscribtionRoutes);
 
 export { app }

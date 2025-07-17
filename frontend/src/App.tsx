@@ -9,39 +9,37 @@ import Login from "./page/LoginPage";
 import Sidebar from "./components/ui/Sidebar";
 import Header from "./components/ui/Header";
 import Profile from "./page/Profile";
+import Upload from "./page/Upload";
+import Home from "./page/Home";
+import VideoPlayer from "./page/VideoPlayer";
 
 function App() {
 
     const { isAuthenticated} = useAuth();
   
-
   return  (
 <>
    <Router>
-      <Routes>
-        {/* Auth Routes */}
     {  !isAuthenticated && 
+      <Routes>
         <Route path="/login" element={<Login />} />
-    }
-      {  isAuthenticated && 
-      <Route path="/" element={<Register />} />
+      <Route path="/*" element={<Register />} />
+  </Routes>
       }
-        </Routes>
-        {/* Main App Routes */}
-{  ! isAuthenticated &&  (
+{ isAuthenticated &&  (
           <div className="min-h-screen bg-gradient-to-br from-gray-900 via-gray-800 to-gray-900 text-white">
             <Header />
             <div className="flex">
               <Sidebar />
               <main className="flex-1 ml-64 pt-20">
                 <Routes>
-                  <Route path="/" element={<Authenticated />} />
-                  {/* <Route path="/watch/:id" element={<VideoPlayer />} />
-                  <Route path="/channel/:id" element={<Channel />} />
+                  <Route path="/" element={<Home />} />
+                  <Route path="/v/:videoId" element={<VideoPlayer />} />
+                  {/* <Route path="/channel/:id" element={<Channel />} /> */}
                   <Route path="/upload" element={<Upload />} />
-                  <Route path="/playlist/:id" element={<Playlist />} />
-                  <Route path="/history" element={<History />} /> */}
-                  <Route path="/profile" element={<Profile />} />
+                  {/* <Route path="/playlist/:id" element={<Playlist />} /> */}
+                  {/* <Route path="/history" element={<History />} /> */}
+                  {/* <Route path="/profile" element={<Profile />} /> */}
                 </Routes>
               </main>
             </div>

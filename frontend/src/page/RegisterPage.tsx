@@ -97,7 +97,7 @@ if (avatar) userData.append("avatar", avatar);
   navigate("/")
  }
 else{
-  
+  return;
 }
     // Simulate API call
     // setTimeout(() => {
