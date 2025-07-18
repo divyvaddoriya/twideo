@@ -7,7 +7,7 @@ import { asyncHandler } from "../utils/asyncHandler.js";
 
 const subscribe = asyncHandler(async (req , res)=>{
 
-    const { channelId  } = req.body;
+    const { channelId  } = req.params;
   
     const channel = await User.findById(channelId);
 
@@ -28,7 +28,7 @@ const subscribe = asyncHandler(async (req , res)=>{
 
 const unsubscribe = asyncHandler(async (req , res)=>{
 
-    const { channelId  } = req.body;
+    const { channelId  } = req.params;
 
     const channel = await User.findById(channelId);
 

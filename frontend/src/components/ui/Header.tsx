@@ -1,12 +1,27 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Search, Bell, User, Upload, Menu, Sparkles, LogOut } from 'lucide-react';
-import { Link } from 'react-router-dom';
-import { logoutUser } from '@/api/auth';
-import { useAuth } from '@/context/authContext';
-
+import { Link, useNavigate } from 'react-router-dom';
+import { logoutUser } from '@/api/auth.ts';
+import { useAuth } from '@/context/authContext.tsx';
+// import toast from "react-toastify"
 const Header = () => {
   const [searchQuery, setSearchQuery] = useState('');
-const {setUser} = useAuth();
+  const navigate = useNavigate();
+  const {setUser , setIsAuthenticated} = useAuth();
+
+  const logout = async()=>{
+      await logoutUser();
+      setUser(null);
+      setIsAuthenticated(false);
+    navigate('/login')
+      // Optional: show toast
+      // toast.success("Logged out successfully!", {
+      //   position: "top-right",
+      //   autoClose: 3000,
+      // });
+  }
+
+// const {setUser} = useAuth();
   return (
     <header className="fixed top-0 left-0 right-0 bg-gray-900/80 backdrop-blur-xl border-b border-gray-700/50 z-50">
       <div className="flex items-center justify-between px-6 py-4">
@@ -23,7 +38,7 @@ const {setUser} = useAuth();
               <div className="absolute inset-0 bg-gradient-to-r from-blue-500 via-purple-500 to-pink-500 rounded-xl blur-lg opacity-30"></div>
             </div>
             <span className="text-2xl font-bold text-white hidden sm:block bg-gradient-to-r from-blue-400 via-purple-400 to-pink-400 bg-clip-text text-transparent">
-              VidStream
+              Twideo
             </span>
           </Link>
         </div>
@@ -70,12 +85,7 @@ const {setUser} = useAuth();
 
           <Link to="/profile" className="p-3 hover:bg-gray-700/50 rounded-2xl transition-colors duration-200 group">
                       <span className="hidden sm:block font-medium">
-                        <button onClick={()=>
-                          {
-                            logoutUser()
-                            setUser();
-                          }
-                          }>
+                        <button onClick= {logout}>
                               Logout
                         </button>
                       </span>

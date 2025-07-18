@@ -23,10 +23,10 @@ if(type == "tweet"){
     toBeLiked = await Tweet.findById(id);
 }
 
-if(toBeLiked) throw new ApiError("there is nothing to like")
+if(!toBeLiked) throw new ApiError("there is nothing to like")
 
     const like = await Like.create({
-        type : id,
+        type : toBeLiked,
         likedBy: req.user._id,
     })
 
@@ -34,29 +34,19 @@ if(toBeLiked) throw new ApiError("there is nothing to like")
 })
 
 // this one is not right logic it need to be changed 
-const removeLike = asyncHandler(async (req , res)=>{
+const removeLike = asyncHandler(async (req, res) => {
+  const { type, id } = req.body;
+  if (!id || !type) throw new ApiError(400, "Missing like target");
 
-    const { type ,id } = req.body;
+  let removedLikeFrom;
+  if (type == "video") removedLikeFrom = await Like.findOneAndDelete({ video: id, likedBy: req.user._id });
+  if (type == "tweet") removedLikeFrom = await Like.findOneAndDelete({ tweet: id, likedBy: req.user._id });
+  if (type == "comment") removedLikeFrom = await Like.findOneAndDelete({ comment: id, likedBy: req.user._id });
 
-    if(!id | !type) throw new ApiError ( 400 ," nothing to like")
+  if (!removedLikeFrom) throw new ApiError(400, "Like not removed");
 
-    let removedLikeFrom;
-
-    if(type == "video"){
-        removedLikeFrom = await Like.findOneAndDelete({video : id , owner: req.user._id});
-    }
-    if(type == "tweet"){
-       removedLikeFrom =  await Like.findOneAndDelete({tweet : id , owner: req.user._id});
-    }
-    if(type == "comment"){
-       removedLikeFrom =  await Like.findOneAndDelete({comment : id , owner: req.user._id});
-    }
-
-    if(!removedLikeFrom) throw new ApiError(400 , "like not removed");
-
-
-    res.status(200).json(new ApiResponse(201 ,"liked removed succesfully"));
-})
+  res.status(200).json(new ApiResponse(200, removedLikeFrom, "Like removed successfully"));
+});
 
 
 export {

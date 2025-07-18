@@ -151,21 +151,26 @@ const getSingleVideo = asyncHandler(async (req, res) => {
       },
     },
     {
-      $addFields: {
-        likeCount: {
-          $size: "$likes",
+  
+  $addFields: {
+    likeCount: { $size: "$likes" },
+    isLiked: {
+      $cond: {
+        if: {
+          $anyElementTrue: {
+            $map: {
+              input: "$likes",
+              in: { $eq: ["$$this.likedBy", req.user?._id] }
+            }
+          }
         },
-        isLiked: {
-          $cond: {
-            if: { $in: [req.user?._id, "$likes.likedBy"] },
-            then: true,
-            else: false,
-          },
-        },
-      },
-    },
-    
-  ]);
+        then: true,
+        else: false
+      }
+    }
+  
+}
+} ]);
 
   if (!video) {
     throw new ApiError("video by this id does not exist");
@@ -174,10 +179,6 @@ const getSingleVideo = asyncHandler(async (req, res) => {
   return res
     .status(201)
     .json(new ApiResponse(201, video, "video fetched successfully"));
-});
-
-const togglePublishStatus = asyncHandler(async (req, res) => {
-  const { videoId } = req.params;
 });
 
 

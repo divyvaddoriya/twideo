@@ -1,5 +1,4 @@
 import axios from "axios";
-import { access } from "fs";
 
 const API_URL = "http://localhost:3000/api/v1/user";
 
@@ -32,7 +31,8 @@ export const loginUser = async (credentials) =>{
 
 export const logoutUser =async () => {
   try {
-    await axios.post(`${API_URL}/logout`)
+    await axios.post(`${API_URL}/logout`,{} , {
+        withCredentials: true     })
     return;
   } catch (error) {
     console.log("error in logging out of user");

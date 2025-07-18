@@ -20,7 +20,7 @@ const addTweet = asyncHandler(async (req , res)=>{
 
 const removeTweet = asyncHandler(async(req , res) =>{
     
-    const {tweetId}  = req.body;
+    const {tweetId}  = req.params;
 
     if(!tweetId) throw new ApiError(404 , "no tweet id entered")
 
@@ -41,7 +41,7 @@ const getTweetFeed = asyncHandler(async(req , res) => {
 })
 
 const getAllTweetByChannel = asyncHandler(async(req, res) => {
-    const { channelId } = req.body
+    const { channelId } = req.params
 
      if(!channelId) throw new ApiError(200 , "no channel id provided");
 
@@ -51,9 +51,18 @@ const getAllTweetByChannel = asyncHandler(async(req, res) => {
 })
 
 const getAllTweetByMe = asyncHandler(async(req,res)=>{
-    
+   
+     if(!req.user._id) throw new ApiError(200 , "no user founded login first");
+
+    const allTweetByme = await Tweet.find({owner : req.user._id});
+
+    return res.status(200).json(201 , allTweetByme , "all tweet fetched of channel")
 })
 
 export {
-    addTweet
+    addTweet,
+    removeTweet, 
+    getTweetFeed,
+    getAllTweetByChannel,
+    getAllTweetByMe
 }

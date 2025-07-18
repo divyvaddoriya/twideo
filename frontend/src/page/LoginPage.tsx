@@ -59,7 +59,7 @@ setUser(user);                // ✅ reset user
               <div className="absolute inset-0 bg-gradient-to-r from-blue-500 via-purple-500 to-pink-500 rounded-2xl blur-xl opacity-30"></div>
             </div>
             <span className="text-3xl font-bold bg-gradient-to-r from-blue-400 via-purple-400 to-pink-400 bg-clip-text text-transparent">
-              VidStream
+              Twideo
             </span>
           </Link>
         </div>

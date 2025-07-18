@@ -2,48 +2,60 @@ import React, { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
 import { ThumbsUp, ThumbsDown, Share, Save, MoreHorizontal, Bell, BellOff } from 'lucide-react';
 import { getVideoData } from '@/api/video';
-import LoadingSpinner from '@/components/LoadingSpinner';
+import { addLike, removeLike } from '@/api/like';
+import { subscribe, unsubscribe } from '@/api/subscribe';
 
 const VideoPlayer = () => {
   const [isSubscribed, setIsSubscribed] = useState(false);
   const [showDescription, setShowDescription] = useState(false);
-  const [comment, setComment] = useState('');
- const [loading , setLoading ] = useState(false);
+//   const [comment, setComment] = useState('');
+//  const [loading , setLoading ] = useState(false);
 const [video , setVideo ] = useState();
   // Mock data - replace with actual API calls
   
-  const {videoId}  = useParams();
-
+  const { videoId }  = useParams();
+ const fetchVideoData = async () => {
+  const videoData = await getVideoData(videoId);
+  console.log("video " + JSON.stringify(videoData.data.data[0]));
+  const fetchedVideo = videoData.data.data[0];
+  setVideo(fetchedVideo);
+  setIsSubscribed(fetchedVideo.owner[0]?.isSubscribed || false); // ✅ Use the fetched data directly
+}
   useEffect(() => {
-    const fetchVideoData =async ()=>{
-      const videoData =   await getVideoData(videoId);
-      console.log("video " + JSON.stringify(videoData));
-      setVideo(videoData.data.data);
-    }
     fetchVideoData();
   } , [videoId]);
-  
-  // console.log(video);
-  
 
-//   const comments = [
-//     {
-//       id: 1,
-//       author: 'John Developer',
-//       avatar: 'https://images.pexels.com/photos/614810/pexels-photo-614810.jpeg?auto=compress&cs=tinysrgb&w=50',
-//       content: 'Great tutorial! This really helped me understand React hooks better.',
-//       likes: 45,
-//       time: '2 days ago',
-//     },
-//     {
-//       id: 2,
-//       author: 'Sarah Code',
-//       avatar: 'https://images.pexels.com/photos/415829/pexels-photo-415829.jpeg?auto=compress&cs=tinysrgb&w=50',
-//       content: 'Amazing explanation of component architecture. Looking forward to more videos!',
-//       likes: 23,
-//       time: '3 days ago',
-//     },
-//   ];
+ const handleLike = async () => {
+  if (!video) return;
+
+  const type = "video"; // ✅ Move this here
+
+  try {
+    if (video.isLiked) {
+      const likedVideo = await removeLike(type, video._id);
+      console.log("Removed like:", likedVideo);
+    } else {
+      const like = await addLike(type, video._id);
+      console.log("Added like:", like);
+    }
+    await fetchVideoData(); // ✅ Always refresh after like/unlike
+  } catch (err) {
+    console.error("Error liking video:", err);
+  }
+};
+
+const handleSubscribe =async (channelId)=>{
+  console.log(video?.owner[0]._id);
+  
+  if(isSubscribed){
+    await unsubscribe(channelId);
+    console.log("toggle to " + isSubscribed);
+  }
+  else{
+    await subscribe(channelId);
+  }
+  
+}
 
   return (
   
@@ -81,18 +93,22 @@ const [video , setVideo ] = useState();
               </div>
               
               <div className="flex items-center space-x-2">
-                <div className="flex items-center bg-gray-700 rounded-full">
-                  <button className="flex items-center space-x-2 px-4 py-2 hover:bg-gray-600 rounded-l-full">
-                    <ThumbsUp className="w-5 h-5" />
-                    {/* <span>{video?..likes}</span> */}
-                  </button>
-                  <div className="w-px h-6 bg-gray-600"></div>
-                  <button className="flex items-center space-x-2 px-4 py-2 hover:bg-gray-600 rounded-r-full">
-                    <ThumbsDown className="w-5 h-5" />
-                    {/* <span>{video?..dislikes}</span> */}
-                  </button>
-                </div>
-                
+               
+               {/* like */}
+                {/* <div className="flex items-center space-x-2"> */}
+  <div className="flex items-center bg-gray-700 rounded-full">
+    <button
+      onClick={handleLike}
+      className={`flex items-center space-x-2 px-4 py-2 hover:bg-gray-600 rounded-l-full ${
+        video?.isLiked ? "bg-blue-600" : ""
+      }`}
+    >
+      <ThumbsUp className="w-5 h-5" />
+      <span>{video?.likeCount}</span>
+    </button>
+   
+</div>
+
                 <button className="flex items-center space-x-2 px-4 py-2 bg-gray-700 hover:bg-gray-600 rounded-full">
                   <Share className="w-5 h-5" />
                   <span>Share</span>
@@ -113,18 +129,21 @@ const [video , setVideo ] = useState();
             <div className="flex items-center justify-between bg-gray-800 p-4 rounded-lg">
               <div className="flex items-center space-x-4">
                 <img
-                  src={video?.owner?.avatar}
-                  alt={video?.owner?.username}
+                  src={video?.owner[0]?.avatar}
+                  alt={video?.owner[0]?.username}
                   className="w-12 h-12 rounded-full"
                 />
                 <div>
-                  <h3 className="font-semibold text-white">{video?.owner?.username}</h3>
+                  <h3 className="font-semibold text-white">{video?.owner[0]?.username}</h3>
                   {/* <p className="text-gray-400 text-sm">{video?.channel.subscribers}</p> */}
                 </div>
               </div>
               
               <button
-                onClick={() => setIsSubscribed(!isSubscribed)}
+                onClick={async () =>{
+                  await handleSubscribe(video?.owner[0]._id);
+                  
+                  setIsSubscribed(!isSubscribed)}}
                 className={`flex items-center space-x-2 px-6 py-2 rounded-full font-medium transition-colors ${
                   isSubscribed
                     ? 'bg-gray-600 text-white hover:bg-gray-500'
@@ -139,7 +158,7 @@ const [video , setVideo ] = useState();
             {/* Description */}
             <div className="bg-gray-800 p-4 rounded-lg">
               <div className={`text-gray-300 ${showDescription ? '' : 'line-clamp-3'}`}>
-                {video?.description.split('\n').map((line, index) => (
+                {video?.description?.split('\n').map((line, index) => (
                   <p key={index} className="mb-2">{line}</p>
                 ))}
               </div>
@@ -216,30 +235,7 @@ const [video , setVideo ] = useState();
           </div>
         </div>
 
-        {/* Sidebar - Related Video?.s */}
-        <div className="space-y-4">
-          <h3 className="text-lg font-semibold text-white">Up Next</h3>
-          {/* Related video?.s would go here */}
-          {/* here real video?. will come */}
-          <div className="space-y-3">
-            {[1, 2, 3, 4, 5].map((i) => (
-              <div key={i} className="flex space-x-3 cursor-pointer hover:bg-gray-800 p-2 rounded-lg transition-colors">
-                <img
-                  src={`https://images.pexels.com/photos/${1000000 + i}/pexels-photo-${1000000 + i}.jpeg?auto=compress&cs=tinysrgb&w=200`}
-                  alt="Related video?."
-                  className="w-32 h-20 object-cover rounded"
-                />
-                <div className="flex-1">
-                  <h4 className="text-white text-sm font-medium line-clamp-2">
-                    Related Video?. Title {i}
-                  </h4>
-                  <p className="text-gray-400 text-xs mt-1">Channel Name</p>
-                  <p className="text-gray-400 text-xs">100K views • 1 day ago</p>
-                </div>
-              </div>
-            ))}
-          </div>
-        </div>
+      
       </div>
     </div>
   );

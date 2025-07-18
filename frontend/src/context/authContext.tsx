@@ -19,6 +19,7 @@ export const AuthProvider = ({ children }) => {
         const res = await axios.get("http://localhost:3000/api/v1/user/me" ,{
           withCredentials: true,
         });
+        // console.log(res);
         setIsAuthenticated(res.data.success);
         setUser(res.data.data);
         toast.success(`Welcome back, ${res.data.data.name || "User"}!`, {

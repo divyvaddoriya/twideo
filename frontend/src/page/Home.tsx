@@ -56,6 +56,7 @@ const Home = () => {
       
       // Pass page parameter to fetchVideos if your API supports it
       const response = await fetchVideos(page);
+    
       console.log('API Response:', response);
       
       // Check if response has the expected structure

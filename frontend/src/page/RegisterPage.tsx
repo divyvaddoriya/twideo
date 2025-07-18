@@ -126,7 +126,7 @@ else{
               <div className="absolute inset-0 bg-gradient-to-r from-blue-500 via-purple-500 to-pink-500 rounded-2xl blur-xl opacity-30"></div>
             </div>
             <span className="text-3xl font-bold bg-gradient-to-r from-blue-400 via-purple-400 to-pink-400 bg-clip-text text-transparent">
-              VidStream
+              Twideo
             </span>
           </Link>
         </div>
@@ -136,7 +136,7 @@ else{
           <div className="absolute inset-0 bg-gradient-to-r from-blue-600/20 via-purple-600/20 to-pink-600/20 rounded-3xl blur-xl"></div>
           <div className="relative bg-gray-900/80 backdrop-blur-xl border border-gray-700/50 rounded-3xl p-8">
             <div className="text-center mb-8">
-              <h1 className="text-3xl font-bold text-white mb-2">Join VidStream</h1>
+              <h1 className="text-3xl font-bold text-white mb-2">Join Twideo</h1>
               <p className="text-gray-400">Create your account and start sharing</p>
             </div>
 

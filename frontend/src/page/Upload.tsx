@@ -104,8 +104,7 @@ const Upload = () => {
       // Here you would call your API
    const response =   await addVideo(uploadData);
       console.log("video uploaded succesfully" , response);
-      return;
-      
+      return;  
     } else {
       console.log("Currently we only support video posting");
       return;
